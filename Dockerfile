@@ -32,7 +32,7 @@ RUN /opt/ibm/ace-12/ace make registry global accept license silently \
     && su - aceuser -c "export LICENSE=accept && . /opt/ibm/ace-12/server/bin/mqsiprofile && mqsicreateworkdir /home/aceuser/ace-server" \
     && echo ". /opt/ibm/ace-12/server/bin/mqsiprofile;export DISPLAY=:99;Xvfb :99 2> /dev/null &" >> /home/aceuser/.bashrc
 
-RUN apt install -y openssh-server
+RUN apt install -y openssh-server openjdk-11-jdk-headless libxml2-utils git
 
 RUN ssh-keygen -A && mkdir -p /var/run/sshd
 
