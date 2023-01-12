@@ -19,13 +19,14 @@ FROM ubuntu:20.04
 # Install ACE v12.0.2.0 and accept the license
 COPY --from=builder /opt/ibm/ace-12 /opt/ibm/ace-12
 
-RUN apt update -y && apt upgrade -y
-
-# Force reinstall tzdata package to get zoneinfo files
-RUN apt install -y python3 vim xvfb libswt-gtk-4-java
-
 # Prevent errors about having no terminal when using apt-get
 ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update --fix-missing -y && apt upgrade -y
+
+# Force reinstall tzdata package to get zoneinfo files
+RUN apt-get install -y python3 vim xvfb libswt-gtk-4-java
+
 
 RUN /opt/ibm/ace-12/ace make registry global accept license silently \
     && useradd --uid 1001 --create-home --home-dir /home/aceuser --shell /bin/bash -G mqbrkrs aceuser \
