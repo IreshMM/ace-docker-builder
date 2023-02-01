@@ -1,6 +1,9 @@
 FROM ubuntu:20.04 as builder
 
-RUN apt update -y && apt upgrade -y && apt -y install aria2
+# Prevent errors about having no terminal when using apt-get
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update -y && apt-get upgrade -y && apt-get -y install aria2
 
 ARG USERNAME
 ARG PASSWORD
@@ -22,22 +25,19 @@ COPY --from=builder /opt/ibm/ace-12 /opt/ibm/ace-12
 # Prevent errors about having no terminal when using apt-get
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update --fix-missing -y && apt upgrade -y
+RUN apt-get update --fix-missing -y && apt-get upgrade -y
 
 # Force reinstall tzdata package to get zoneinfo files
 RUN apt-get install -y python3 vim xvfb libswt-gtk-4-java
 
 
 RUN /opt/ibm/ace-12/ace make registry global accept license silently \
-    && useradd --uid 1001 --create-home --home-dir /home/aceuser --shell /bin/bash -G mqbrkrs aceuser \
+    && useradd --uid 1000 --create-home --home-dir /home/aceuser --shell /bin/bash -G mqbrkrs aceuser \
     && su - aceuser -c "export LICENSE=accept && . /opt/ibm/ace-12/server/bin/mqsiprofile && mqsicreateworkdir /home/aceuser/ace-server" \
     && echo ". /opt/ibm/ace-12/server/bin/mqsiprofile;export DISPLAY=:99;Xvfb :99 2> /dev/null &" >> /home/aceuser/.bashrc
 
-RUN apt install -y openssh-server openjdk-11-jdk-headless libxml2-utils git
+RUN apt-get install -y openssh-server openjdk-11-jdk-headless libxml2-utils git
 
-RUN ssh-keygen -A && mkdir -p /var/run/sshd
+USER aceuser
 
-EXPOSE 22
-
-# Set entrypoint to run the server
-ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+CMD ["/bin/bash"]
