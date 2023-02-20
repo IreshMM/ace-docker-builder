@@ -8,7 +8,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get -y install aria2
 ARG USERNAME
 ARG PASSWORD
 ARG OUTFILE=/tmp/ace-install.tar.gz
-ARG DOWNLOAD_URL=http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/12.0.2.0-ACE-LINUX64-DEVELOPER.tar.gz
+ARG DOWNLOAD_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/12.0.4.0-ACE-LINUX64-DEVELOPER.tar.gz
 
 
 RUN if [ -z $USERNAME ]; then aria2c -x 16 -o $OUTFILE ${DOWNLOAD_URL}; else aria2c -x 16 --o $OUTFILE --http-user=$USERNAME --http-passwd=$PASSWORD  ${DOWNLOAD_URL}; fi
